@@ -28,7 +28,11 @@ export const TaskForm = () => {
   useEffect(() => {
     const firebaseData = doc(db, "task", currentUser.email);
     onSnapshot(firebaseData, (doc) => {
-      setArrayTasks(doc.data().tasks);
+      if (doc.data() === undefined) {
+        setArrayTasks([]);
+      } else {
+        setArrayTasks(doc.data().tasks);
+      }
     });
   }, []);
 

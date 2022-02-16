@@ -23,7 +23,8 @@ export const LoggedContainer = () => {
       >
         <Text mr={2}>Desarrollado por</Text>
         <Link href="https://www.github.com/nahuerodcast" isExternal>
-          <strong>Nahuel Rodriguez</strong>
+          <strong>Nahuel Rodriguez 🚀</strong>
+         
         </Link>
       </Flex>
     </Flex>

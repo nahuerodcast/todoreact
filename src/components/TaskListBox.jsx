@@ -10,17 +10,29 @@ import { FcTodoList } from "react-icons/fc";
 export const TaskListBox = () => {
   const { currentUser } = useAuth();
   const [taskArray, setTaskArray] = useState([]);
+  const [validEmail, setValidEmail] = useState("");
 
   // Setting the data from firebase to an array
   useEffect(() => {
     const firebaseData = doc(db, "task", currentUser.email);
     onSnapshot(firebaseData, (doc) => {
-      setTaskArray(doc.data().tasks);
+      if (doc.data() === undefined) {
+        setTaskArray([]);
+      } else {
+        setTaskArray(doc.data().tasks);
+      }
     });
   }, []);
 
   return (
-    <Box boxShadow={"xl"} w="md" minH={"xs"} rounded="2xl" bg={"white"} p={6}>
+    <Box
+      boxShadow={"xl"}
+      w={["sm", "md", "lg"]}
+      minH={"xs"}
+      rounded="2xl"
+      bg={"white"}
+      p={6}
+    >
       <Flex alignItems={"center"}>
         <Heading fontSize={"2xl"} mr={1}>
           Lista de tareas

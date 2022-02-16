@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Heading } from "@chakra-ui/react";
+import { Button, Flex, Heading, Text } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 import { useAuth } from "../context/AuthContext";
 
@@ -20,6 +20,7 @@ export const UnloggedContainer = () => {
           app
         </Heading>
       </Flex>
+
       <Button leftIcon={<FcGoogle />} onClick={() => signInWithGoogle()}>
         Iniciar sesión con Google
       </Button>

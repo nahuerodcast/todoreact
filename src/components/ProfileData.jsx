@@ -7,7 +7,7 @@ export const ProfileData = () => {
   const { currentUser, logout } = useAuth();
   return (
     <Flex flexDir={"column"} alignItems="center" mb={4}>
-      <Avatar src={currentUser.photoURL} />
+      <Avatar src={currentUser.photoURL} name={currentUser.displayName} />
       <Heading fontSize={"2xl"} mt={2}>
         {currentUser.displayName}
       </Heading>
