@@ -1,34 +1,43 @@
 import { Button, Checkbox, Flex, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React from "react";
 import { MdDeleteOutline } from "react-icons/md";
-import { doc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, updateDoc, arrayRemove, arrayUnion } from "firebase/firestore";
 import { useAuth } from "../context/AuthContext";
 import { db } from "../utils/init-firebase";
 
 export const Todo = ({ data }) => {
-  const [isChecked, setIsChecked] = useState(false);
   const { currentUser } = useAuth();
 
   const update = doc(db, "task", currentUser.email);
 
   const updateData = async () => {
-    console.log(data.isCompleted);
-    // // setIsChecked(!isChecked);
-    // if (data.isCompleted) {
-    //   await updateDoc(update, {
-    //     tasks: arrayRemove({ taskDesc: data.taskDesc, isCompleted: true }),
-    //   });
-    //   await updateDoc(update, {
-    //     tasks: arrayUnion({ taskDesc: data.taskDesc, isCompleted: false }),
-    //   });
-    // } else {
-    //   await updateDoc(update, {
-    //     tasks: arrayRemove({ taskDesc: data.taskDesc, isCompleted: false }),
-    //   });
-    //   await updateDoc(update, {
-    //     tasks: arrayUnion({ taskDesc: data.taskDesc, isCompleted: true }),
-    //   });
-    // }
+    if (data.isCompleted) {
+      await updateDoc(update, {
+        tasks: arrayRemove({
+          taskDesc: data.taskDesc,
+          isCompleted: true,
+        }),
+      });
+      await updateDoc(update, {
+        tasks: arrayUnion({
+          taskDesc: data.taskDesc,
+          isCompleted: false,
+        }),
+      });
+    } else {
+      await updateDoc(update, {
+        tasks: arrayRemove({
+          taskDesc: data.taskDesc,
+          isCompleted: false,
+        }),
+      });
+      await updateDoc(update, {
+        tasks: arrayUnion({
+          taskDesc: data.taskDesc,
+          isCompleted: true,
+        }),
+      });
+    }
   };
 
   const deleteTask = async () => {
@@ -55,7 +64,7 @@ export const Todo = ({ data }) => {
         <Flex>
           <Checkbox
             mr={2}
-            defaultChecked={data.isCompleted ? true : false}
+            isChecked={data.isCompleted ? true : false}
             colorScheme="green"
             onChange={() => {
               updateData();

@@ -4,46 +4,53 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  useToast,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
-import { BsPlusSquare } from "react-icons/bs";
+import React, { useEffect, useState } from "react";
+import { BsPlusSquare, BsXLg } from "react-icons/bs";
 import { useAuth } from "../context/AuthContext";
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "../utils/init-firebase";
 
 export const TaskForm = () => {
+  // useAuth hook + useState hooks
   const { currentUser } = useAuth();
+  const toast = useToast();
   const [task, setTask] = useState("");
-  const [tasks, setTasks] = useState([]);
+  const [arrayTasks, setArrayTasks] = useState([]);
+
+  // Setting the task from the input to useState variable
   const handleChange = (e) => {
     setTask(e.target.value);
   };
 
-  const array = [
-    { taskDesc: "Sacar al perro", isCompleted: true },
-    { taskDesc: "Comprar comida", isCompleted: false },
-    { taskDesc: "Ir al mar", isCompleted: false },
-    { taskDesc: "Comprar fruta", isCompleted: false },
-  ];
+  // Getting the actual data from firebase and setting to an array
+  useEffect(() => {
+    const firebaseData = doc(db, "task", currentUser.email);
+    onSnapshot(firebaseData, (doc) => {
+      setArrayTasks(doc.data().tasks);
+    });
+  }, []);
 
-  const arrayDos = [{ taskDesc: task, isCompleted: true }];
-  const [object, setObject] = useState(array);
+  // Creating another array with the task from the input
 
+  const taskArray = [{ taskDesc: task, isCompleted: false }];
+
+  // Setting the new array to firebase
   const setData = async () => {
+    if (task === "") {
+      toast({
+        title: "Atención",
+        description: "Tenes que ingresar una tarea",
+        status: "warning",
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
     const update = doc(db, "task", currentUser.email);
-    //   console.log(update);
-    //    await setDoc(update, {
-    //     tasks: taskArray,
-    //  });
-    //   if (task === "") {
-    //     return;
-    //   }
-    //   await updateDoc(update, {
-    //     tasks: arrayUnion({ taskDesc: task, isCompleted: false }),
-    //   });
-
-    await updateDoc(update, {
-      array,
+    await setDoc(update, {
+      tasks: [...arrayTasks, ...taskArray],
     });
   };
 
@@ -68,8 +75,10 @@ export const TaskForm = () => {
               h="1.75rem"
               size="sm"
               colorScheme={"orange"}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 setData();
+                setTask("");
               }}
               type="submit"
               mr={0}
